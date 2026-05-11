@@ -7,6 +7,9 @@ reports/*.md
 !reports/.gitkeep
 output/*
 !output/.gitkeep
+interview-prep/story-bank.md
+aws_jobs.json
+.claude/settings.json
 batch/logs/*
 !batch/logs/.gitkeep
 batch/batch-state.tsv
