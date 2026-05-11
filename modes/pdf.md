@@ -17,9 +17,10 @@
 11. Inyecta keywords naturalmente en logros existentes (NUNCA inventa)
 12. Genera HTML completo: read `templates/cv-template-user.html`, copy its `<style>` block VERBATIM (do not modify any CSS), then replace `{{...}}` placeholders in `<body>` with personalized content.
 13. Lee `name` de `config/profile.yml` → normaliza a kebab-case lowercase (e.g. "John Doe" → "john-doe") → `{candidate}`
-14. Escribe HTML a `/tmp/cv-{candidate}-{company}.html`
-15. Ejecuta: `node generate-pdf.mjs /tmp/cv-{candidate}-{company}.html output/cv-{candidate}-{company}-{YYYY-MM-DD}.pdf --format={letter|a4}`
-15. Reporta: ruta del PDF, nº páginas, % cobertura de keywords
+14. **Crea carpeta por aplicación**: `output/{company-slug}-{YYYY-MM-DD}/` (agrupa CV + cover letter + cualquier otro artefacto de esta postulación, facilita lookup en llamadas con recruiters)
+15. Escribe HTML a `output/{company-slug}-{YYYY-MM-DD}/cv-{candidate}-{company-slug}.html`
+16. Ejecuta: `node generate-pdf.mjs output/{company-slug}-{YYYY-MM-DD}/cv-{candidate}-{company-slug}.html output/{company-slug}-{YYYY-MM-DD}/cv-{candidate}-{company-slug}.pdf --format={letter|a4}`
+17. Reporta: ruta del PDF, nº páginas, % cobertura de keywords
 
 ## Reglas ATS (parseo limpio)
 
@@ -38,11 +39,11 @@
 Quick reference of the current design (for context only — the file is the source of truth):
 
 - **Font**: Times New Roman, classic ATS look, pure black/white
-- **Name (h1)**: 19pt bold, centered
+- **Name (h1)**: 19pt bold, centered, line-height 1.1
 - **Section headers**: 13pt bold uppercase, 1pt black underline
-- **Body**: 10pt, line-height 1.38
-- **Bullets**: 10pt, line-height 1.45, margin-bottom 3pt
-- **Margins**: `0.08in 0.42in 0.2in 0.42in`
+- **Body**: 11pt, line-height 1.30
+- **Bullets**: 11pt, line-height 1.32, margin-bottom 2pt
+- **Margins**: `0.25in 0.42in 0.25in 0.42in`
 - **Page size**: Letter
 - **Background**: pure white
 
