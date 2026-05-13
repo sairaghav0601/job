@@ -15,12 +15,11 @@
 9. Reordena bullets de experiencia por relevancia al JD
 10. Construye competency grid desde requisitos del JD (6-8 keyword phrases)
 11. Inyecta keywords naturalmente en logros existentes (NUNCA inventa)
-12. Genera HTML completo: read `templates/cv-template-user.html`, copy its `<style>` block VERBATIM (do not modify any CSS), then replace `{{...}}` placeholders in `<body>` with personalized content.
+12. Genera HTML completo desde template + contenido personalizado
 13. Lee `name` de `config/profile.yml` → normaliza a kebab-case lowercase (e.g. "John Doe" → "john-doe") → `{candidate}`
-14. **Crea carpeta por aplicación**: `output/{company-slug}-{YYYY-MM-DD}/` (agrupa CV + cover letter + cualquier otro artefacto de esta postulación, facilita lookup en llamadas con recruiters)
-15. Escribe HTML a `output/{company-slug}-{YYYY-MM-DD}/cv-{candidate}-{company-slug}.html`
-16. Ejecuta: `node generate-pdf.mjs output/{company-slug}-{YYYY-MM-DD}/cv-{candidate}-{company-slug}.html output/{company-slug}-{YYYY-MM-DD}/cv-{candidate}-{company-slug}.pdf --format={letter|a4}`
-17. Reporta: ruta del PDF, nº páginas, % cobertura de keywords
+14. Escribe HTML a `/tmp/cv-{candidate}-{company}.html`
+15. Ejecuta: `node generate-pdf.mjs /tmp/cv-{candidate}-{company}.html output/cv-{candidate}-{company}-{YYYY-MM-DD}.pdf --format={letter|a4}`
+15. Reporta: ruta del PDF, nº páginas, % cobertura de keywords
 
 ## Reglas ATS (parseo limpio)
 
@@ -34,18 +33,14 @@
 
 ## Diseño del PDF
 
-**The canonical template is `templates/cv-template-user.html`. Read its `<style>` block and copy it VERBATIM into every tailored CV. Do not invent CSS values — use exactly what's in that file.**
-
-Quick reference of the current design (for context only — the file is the source of truth):
-
-- **Font**: Times New Roman, classic ATS look, pure black/white
-- **Name (h1)**: 19pt bold, centered, line-height 1.1
-- **Section headers**: 13pt bold uppercase, 1pt black underline
-- **Body**: 11pt, line-height 1.30
-- **Bullets**: 11pt, line-height 1.32, margin-bottom 2pt
-- **Margins**: `0.25in 0.42in 0.25in 0.42in`
-- **Page size**: Letter
-- **Background**: pure white
+- **Fonts**: Space Grotesk (headings, 600-700) + DM Sans (body, 400-500)
+- **Fonts self-hosted**: `fonts/`
+- **Header**: nombre en Space Grotesk 24px bold + línea gradiente `linear-gradient(to right, hsl(187,74%,32%), hsl(270,70%,45%))` 2px + fila de contacto
+- **Section headers**: Space Grotesk 13px, uppercase, letter-spacing 0.05em, color cyan primary
+- **Body**: DM Sans 11px, line-height 1.5
+- **Company names**: color accent purple `hsl(270,70%,45%)`
+- **Márgenes**: 0.6in
+- **Background**: blanco puro
 
 ## Orden de secciones (optimizado "6-second recruiter scan")
 
@@ -68,11 +63,7 @@ Ejemplos de reformulación legítima:
 
 ## Template HTML
 
-**Use `templates/cv-template-user.html`** (NOT `cv-template.html`). Read the entire file. Copy its `<style>` block VERBATIM. Then replace the `{{...}}` placeholders inside `<body>` with personalized content.
-
-If the tailored content overflows to 2 pages with this CSS, **trim a bullet or shorten the summary**. Do NOT compress line-heights, margins, or any CSS values to force-fit content.
-
-Placeholder table:
+Usar el template en `cv-template.html`. Reemplazar los placeholders `{{...}}` con contenido personalizado:
 
 | Placeholder | Contenido |
 |-------------|-----------|
