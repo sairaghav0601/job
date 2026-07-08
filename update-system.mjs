@@ -38,7 +38,10 @@ const RELEASES_API = 'https://api.github.com/repos/santifer/career-ops/releases/
 // Anchoring on `(?:^|-)` lets the releases-API fallback parse our tags,
 // which Release Please always prefixes with the component name.
 export const SEMVER_RE = /(?:^|-)v?(\d+\.\d+\.\d+)$/i;
-export const DEFAULT_GIT_TIMEOUT_MS = parsePositiveInt(process.env.CAREER_OPS_GIT_TIMEOUT_MS, 30000);
+// 120s: local git commands are normally instant, but a cloud-evicted working
+// tree (iCloud "optimize storage", OneDrive dehydration) can stall a plain
+// `git status` for a minute of pure I/O wait re-materializing files (#1393).
+export const DEFAULT_GIT_TIMEOUT_MS = parsePositiveInt(process.env.CAREER_OPS_GIT_TIMEOUT_MS, 120000);
 export const DEFAULT_GIT_FETCH_TIMEOUT_MS = parsePositiveInt(
   process.env.CAREER_OPS_GIT_FETCH_TIMEOUT_MS,
   Math.max(DEFAULT_GIT_TIMEOUT_MS, 300000),
@@ -158,6 +161,8 @@ const SYSTEM_PATHS = [
   'salary-gap.mjs',
   'followup-cadence.mjs',
   'followup-cadence.test.mjs',
+  'invite-match.mjs',
+  'invite-match.test.mjs',
   'agent-inbox.mjs',
   'followup-seed.mjs',
   'followup-seed-tests.mjs',
@@ -241,6 +246,7 @@ const SYSTEM_PATHS = [
   'DOCKER.md',
   'plugins/',
   'plugins.mjs',
+  'plugins-registry/',
   'plugins-registry.json',
   'plugin-install.mjs',
   'plugin-audit.mjs',
@@ -268,6 +274,7 @@ const BOOTSTRAP_PATHS = [
   'tracker-columns-tests.mjs',
   'plugins/',
   'plugins.mjs',
+  'plugins-registry/',
   'plugins-registry.json',
   'plugin-install.mjs',
   'plugin-audit.mjs',
@@ -296,6 +303,7 @@ const USER_PATHS = [
   'plugins.local/',
   'plugins.lock',
   '.claude/settings.json',
+  '.claude/hooks/',
 ];
 
 function parseVersionFile(raw) {

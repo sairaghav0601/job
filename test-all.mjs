@@ -968,6 +968,20 @@ if (shared.includes('_profile.md')) {
   fail('_shared.md does NOT reference _profile.md');
 }
 
+// --- _custom.md must be READ, not just written (#1388): Sources of Truth row +
+// honor rule in _shared.md, and an explicit pre-generation read in pdf.md ---
+const pdfModeCustom = readFile('modes/pdf.md');
+if (
+  shared.includes('| _custom.md | `modes/_custom.md` (if exists) |') &&
+  shared.includes('Read _custom.md (if it exists) AFTER this file and honor its house rules in every mode') &&
+  shared.includes('does not expire between sessions or between items in a batch') &&
+  pdfModeCustom.includes('read `modes/_custom.md` (if it exists) and apply its formatting/content house rules')
+) {
+  pass('_custom.md is wired into the read path: Sources of Truth row + honor rule in _shared.md + explicit read in pdf.md (#1388)');
+} else {
+  fail('_custom.md read-path regressed: missing Sources of Truth row, honor rule in _shared.md, or the pre-generation read in pdf.md (#1388 would reopen)');
+}
+
 for (const skillPath of ['.claude/skills/career-ops/SKILL.md', '.agents/skills/career-ops/SKILL.md']) {
   if (!fileExists(skillPath)) {
     fail(`${skillPath} is missing`);
@@ -1298,6 +1312,47 @@ if (
   fail('offer-prep missing from data contract / gitignore / SYSTEM_PATHS');
 }
 
+if (
+  ofertaMode.includes('Company type classification (required)') &&
+  ofertaMode.includes('Growth-stage startup / VC-backed startup') &&
+  ofertaMode.includes('Early-stage startup / pre-revenue startup') &&
+  ofertaMode.includes('Open-source community / education community') &&
+  ofertaMode.includes('actual contract / hiring entity') &&
+  ofertaMode.includes('default compensation reliability to the conservative canonical tier: `Low`') &&
+  ofertaMode.includes('Compensation reliability (required)') &&
+  ofertaMode.includes('If no advertised number exists, collapse this section to exactly two concise lines') &&
+  ofertaMode.includes('skip component split, detailed market rows, and HR verification questions') &&
+  ofertaMode.includes('Advertised range') &&
+  ofertaMode.includes('Likely guaranteed base') &&
+  ofertaMode.includes('Variable / conditional cash components') &&
+  ofertaMode.includes('Expected stable cash') &&
+  ofertaMode.includes('Non-cash benefits') &&
+  ofertaMode.includes('Required HR verification questions when a salary figure exists') &&
+  ofertaMode.includes('Do not present advertised compensation as real take-home pay')
+) {
+  pass('oferta requires company-type-driven compensation reliability checks');
+} else {
+  fail('oferta missing durable company-type compensation reliability instructions');
+}
+
+if (
+  shared.includes('## Company Type and Compensation Reliability') &&
+  shared.includes('Company type taxonomy') &&
+  shared.includes('Growth-stage startup / VC-backed startup') &&
+  shared.includes('Early-stage startup / pre-revenue startup') &&
+  shared.includes('Open-source community / education community') &&
+  shared.includes('actual contract / hiring entity') &&
+  shared.includes('default compensation reliability to the conservative canonical tier: `Low`') &&
+  shared.includes('Compensation reliability tiers') &&
+  shared.includes('collapse compensation analysis to two concise lines: company type and reliability tier') &&
+  shared.includes('advertised range, likely guaranteed base, variable / conditional cash components, expected stable cash, and non-cash benefits') &&
+  shared.includes('Never present advertised compensation as real take-home pay')
+) {
+  pass('_shared.md defines the canonical company-type compensation reliability framework');
+} else {
+  fail('_shared.md missing canonical company-type compensation reliability framework');
+}
+
 const pipelineMode = readFile('modes/pipeline.md');
 if (
   pipelineMode.includes('## Liveness sweep') &&
@@ -1487,6 +1542,17 @@ if (
   pass('scan.md skips expensive levels after successful local parser');
 } else {
   fail('scan.md missing local_parser_ok skip rules for agent scan');
+}
+
+// Guard against scan.md's manual-parse conventions drifting from what providers/*.mjs
+// emit and scan.mjs's filters consume (location/salary/description). We assert the two
+// most specific, consumed-field tokens: Ashby `secondaryLocations` (location_filter) and
+// Lever `descriptionPlain` (content_filter + #1597 cross-listing dedup). Raw API
+// identifiers → language-neutral, low-brittleness.
+if (scanMode.includes('secondaryLocations') && scanMode.includes('descriptionPlain')) {
+  pass('scan.md parse conventions document consumed provider fields (ashby secondaryLocations, lever descriptionPlain)');
+} else {
+  fail('scan.md parse conventions drifted from providers/*.mjs — missing secondaryLocations (ashby) or descriptionPlain (lever) that scan.mjs filters consume');
 }
 
 if (!fileExists('scripts/parsers/cohere_jobs.py')) {
